@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.firebase.database.DataSnapshot;
@@ -16,7 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ViewItems extends AppCompatActivity {
+public class ViewItems extends AppCompatActivity implements RecyclerViewClickInterface {
 
     ArrayList<String> myDataset= new ArrayList<String>();
     Item item = new Item();
@@ -30,6 +31,11 @@ public class ViewItems extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
 
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        MyAdapter mAdapter = new MyAdapter(myDataset,this);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(ViewItems.this, LinearLayoutManager.VERTICAL));
+        mRecyclerView.setAdapter(mAdapter);
+
         DatabaseReference fireDB = FirebaseDatabase.getInstance().getReference("Item");
         fireDB.addValueEventListener(new ValueEventListener() {
             @Override
@@ -38,10 +44,7 @@ public class ViewItems extends AppCompatActivity {
                     item = data.getValue(Item.class);
                     myDataset.add("Title: " + item.getTitle() + "\nCategory: " + item.getCategory() + "\nManufacturer: " + item.getManufacturer() + "\nPrice: " + item.getPrice() + "\nStock: " + item.getStock());
                 }
-                mRecyclerView.setLayoutManager(mLayoutManager);
-                MyAdapter mAdapter = new MyAdapter(myDataset);
-                mRecyclerView.addItemDecoration(new DividerItemDecoration(ViewItems.this, LinearLayoutManager.VERTICAL));
-                mRecyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -49,5 +52,11 @@ public class ViewItems extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Intent intent = new Intent(getApplicationContext(), ViewItems.class);
+        startActivity(intent);
     }
 }

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,9 +18,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class SearchResult extends AppCompatActivity implements MyAdapter.clickListener {
+public class SearchResult extends AppCompatActivity implements RecyclerViewClickInterface{
 
     ArrayList<String> myDataset= new ArrayList<String>();
+    ArrayList<Item> Items= new ArrayList<Item>();
     Item item = new Item();
 
     @Override
@@ -30,6 +32,11 @@ public class SearchResult extends AppCompatActivity implements MyAdapter.clickLi
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recyclerview);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        MyAdapter mAdapter = new MyAdapter(myDataset, this);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(SearchResult.this, LinearLayoutManager.VERTICAL));
+        mRecyclerView.setAdapter(mAdapter);
 
         String type = getIntent().getStringExtra("type");
         String search = getIntent().getStringExtra("search");
@@ -43,25 +50,25 @@ public class SearchResult extends AppCompatActivity implements MyAdapter.clickLi
                         item = data.getValue(Item.class);
                         if (item.getTitle().contains(search)) {
                             myDataset.add("Title: " + item.getTitle() + "\nCategory: " + item.getCategory() + "\nManufacturer: " + item.getManufacturer() + "\nPrice: " + item.getPrice() + "\nStock: " + item.getStock());
+                            Items.add(item);
                         }
                     }
                         if (type.equalsIgnoreCase("Manufacturer")) {
                             item = data.getValue(Item.class);
                             if (item.getManufacturer().contains(search)) {
                                 myDataset.add("Title: " + item.getTitle() + "\nCategory: " + item.getCategory() + "\nManufacturer: " + item.getManufacturer() + "\nPrice: " + item.getPrice() + "\nStock: " + item.getStock());
+                                Items.add(item);
                             }
                         }
                     if (type.equalsIgnoreCase("Category")) {
                         item = data.getValue(Item.class);
                         if (item.getCategory().contains(search)) {
                             myDataset.add("Title: " + item.getTitle() + "\nCategory: " + item.getCategory() + "\nManufacturer: " + item.getManufacturer() + "\nPrice: " + item.getPrice() + "\nStock: " + item.getStock());
+                            Items.add(item);
                         }
                     }
                 }
-                mRecyclerView.setLayoutManager(mLayoutManager);
-                MyAdapter mAdapter = new MyAdapter(myDataset);
-                mRecyclerView.addItemDecoration(new DividerItemDecoration(SearchResult.this, LinearLayoutManager.VERTICAL));
-                mRecyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -72,9 +79,11 @@ public class SearchResult extends AppCompatActivity implements MyAdapter.clickLi
     }
 
     @Override
-    public void onClick(int position) {
-        myDataset.get(position);
-        Intent intent = new Intent(this, AddToBasket.class);
+    public void onItemClick(int position) {
+        Toast.makeText(this, "click", Toast.LENGTH_SHORT).show();
+        Item myItem = Items.get(position);
+        Intent intent = new Intent(getApplicationContext(), AddToBasket.class);
+        intent.putExtra("item", myItem.getTitle());
         startActivity(intent);
     }
 }

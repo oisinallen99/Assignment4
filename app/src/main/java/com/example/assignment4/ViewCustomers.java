@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.firebase.database.DataSnapshot;
@@ -16,7 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ViewCustomers extends AppCompatActivity {
+public class ViewCustomers extends AppCompatActivity implements RecyclerViewClickInterface{
 
     ArrayList<String> myDataset= new ArrayList<String>();
     User user = new User();
@@ -30,6 +31,11 @@ public class ViewCustomers extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
 
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        MyAdapter mAdapter = new MyAdapter(myDataset, this);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(ViewCustomers.this, LinearLayoutManager.VERTICAL));
+        mRecyclerView.setAdapter(mAdapter);
+
         DatabaseReference fireDB = FirebaseDatabase.getInstance().getReference("User");
         fireDB.addValueEventListener(new ValueEventListener() {
             @Override
@@ -40,10 +46,7 @@ public class ViewCustomers extends AppCompatActivity {
                         myDataset.add("Name: " + user.getName() + "\nEmail: " + user.getEmail() + "\nAddress: " + user.getAddress());
                     }
                 }
-                mRecyclerView.setLayoutManager(mLayoutManager);
-                MyAdapter mAdapter = new MyAdapter(myDataset);
-                mRecyclerView.addItemDecoration(new DividerItemDecoration(ViewCustomers.this, LinearLayoutManager.VERTICAL));
-                mRecyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -51,5 +54,11 @@ public class ViewCustomers extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Intent intent = new Intent(getApplicationContext(), ViewCustomers.class);
+        startActivity(intent);
     }
 }

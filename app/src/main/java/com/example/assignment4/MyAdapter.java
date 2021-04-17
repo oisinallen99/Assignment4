@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     private ArrayList<String> mylistvalues;
+    private RecyclerViewClickInterface recyclerViewClickInterface;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -21,11 +22,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         public MyViewHolder(View itemView) {
             super(itemView);
             txtView = (TextView) itemView.findViewById(R.id.textView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recyclerViewClickInterface.onItemClick(getAdapterPosition());
+                }
+            });
         }
     }
 
-    public MyAdapter(ArrayList<String> myDataset){
-        mylistvalues = myDataset;
+    public MyAdapter(ArrayList<String> myDataset, RecyclerViewClickInterface recyclerViewClickInterface){
+        this.mylistvalues = myDataset;
+        this.recyclerViewClickInterface = recyclerViewClickInterface;
+
     }
 
     @Override
@@ -47,7 +57,4 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         return mylistvalues.size();
     }
 
-    public interface clickListener{
-        void onClick(int position);
-    }
 }
