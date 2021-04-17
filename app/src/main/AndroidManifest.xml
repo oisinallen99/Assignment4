@@ -9,6 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Assignment4">
+        <activity android:name=".AddToBasket"></activity>
+        <activity android:name=".ViewCustomers" />
+        <activity android:name=".ViewItems" />
+        <activity android:name=".UpdateItem" />
+        <activity android:name=".AddItem" />
+        <activity android:name=".MyAdapter" />
+        <activity android:name=".ViewCustomerInfo" />
+        <activity android:name=".SearchResult" />
+        <activity android:name=".AdminPage" />
+        <activity android:name=".CustomerPage" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
