@@ -53,6 +53,7 @@ public class AdminPage extends AppCompatActivity {
     }
 
     public void viewPurchases(View view){
-
+        Intent intent = new Intent(this, ViewPurchases.class);
+        startActivity(intent);
     }
 }
