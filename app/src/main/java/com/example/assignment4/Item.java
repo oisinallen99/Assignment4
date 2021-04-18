@@ -1,6 +1,9 @@
 package com.example.assignment4;
 
-public class Item {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Item implements Parcelable {
     String title;
     String manufacturer;
     String category;
@@ -22,6 +25,26 @@ public class Item {
         this.price = price;
         this.stock = stock;
     }
+
+    protected Item(Parcel in) {
+        title = in.readString();
+        manufacturer = in.readString();
+        category = in.readString();
+        price = in.readString();
+        stock = in.readInt();
+    }
+
+    public static final Creator<Item> CREATOR = new Creator<Item>() {
+        @Override
+        public Item createFromParcel(Parcel in) {
+            return new Item(in);
+        }
+
+        @Override
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
 
     public int getStock() {
         return stock;
@@ -61,5 +84,19 @@ public class Item {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(manufacturer);
+        dest.writeString(category);
+        dest.writeString(price);
+        dest.writeInt(stock);
     }
 }

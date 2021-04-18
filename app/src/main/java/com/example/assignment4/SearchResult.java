@@ -8,8 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,10 +27,16 @@ public class SearchResult extends AppCompatActivity implements RecyclerViewClick
     ArrayList<Item> Items= new ArrayList<Item>();
     Item item = new Item();
 
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
+    String userType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
+
+        mAuth = FirebaseAuth.getInstance();
 
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recyclerview);
         mRecyclerView.setHasFixedSize(true);
@@ -80,10 +89,31 @@ public class SearchResult extends AppCompatActivity implements RecyclerViewClick
 
     @Override
     public void onItemClick(int position) {
-        Toast.makeText(this, "click", Toast.LENGTH_SHORT).show();
         Item myItem = Items.get(position);
-        Intent intent = new Intent(getApplicationContext(), AddToBasket.class);
-        intent.putExtra("item", myItem.getTitle());
-        startActivity(intent);
+        mUser = mAuth.getCurrentUser();
+        String userID = mUser.getUid();
+        DatabaseReference fireDB = FirebaseDatabase.getInstance().getReference("User").child(userID);
+        fireDB.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User userObj = snapshot.getValue(User.class);
+                userType = userObj.getUserType();
+                if (userType.equalsIgnoreCase("Customer")){
+                    Intent intent = new Intent(getApplicationContext(), AddToBasket.class);
+                    intent.putExtra("item", (Parcelable) myItem);
+                    startActivity(intent);
+                }
+                if (userType.equalsIgnoreCase("Admin")){
+                    Intent intent = new Intent(getApplicationContext(), UpdateItem.class);
+                    intent.putExtra("item", (Parcelable) myItem);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

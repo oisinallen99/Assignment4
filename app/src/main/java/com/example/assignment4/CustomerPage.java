@@ -39,8 +39,4 @@ public class CustomerPage extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void checkout(View view){
-        Intent intent = new Intent(this, ViewCustomerInfo.class);
-        startActivity(intent);
-    }
 }
