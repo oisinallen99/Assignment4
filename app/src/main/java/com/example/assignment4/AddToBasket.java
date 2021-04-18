@@ -18,7 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class AddToBasket extends AppCompatActivity implements pruchaseItemFacade {
+public class AddToBasket extends AppCompatActivity implements PruchaseItemFacade, Command {
 
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
@@ -82,15 +82,11 @@ public class AddToBasket extends AppCompatActivity implements pruchaseItemFacade
                     db.child("Purchase").child(timestamp).setValue(purchase).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            Toast.makeText(AddToBasket.this, "Item Purchased", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), CustomerPage.class);
-                            startActivity(intent);
+                            executeSuccess();
                         }
                     });
                 } else {
-                    Toast.makeText(AddToBasket.this, "Error: no stock", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), CustomerPage.class);
-                    startActivity(intent);
+                    executeFail();
                 }
             }
 
@@ -110,5 +106,19 @@ public class AddToBasket extends AppCompatActivity implements pruchaseItemFacade
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void executeSuccess() {
+        Toast.makeText(AddToBasket.this, "Item Purchased", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), CustomerPage.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void executeFail() {
+        Toast.makeText(AddToBasket.this, "Error: no stock", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), CustomerPage.class);
+        startActivity(intent);
     }
 }
