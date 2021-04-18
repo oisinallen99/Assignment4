@@ -18,7 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class AddToBasket extends AppCompatActivity {
+public class AddToBasket extends AppCompatActivity implements pruchaseItemFacade {
 
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
@@ -49,7 +49,7 @@ public class AddToBasket extends AppCompatActivity {
         edtPrice.setText(myItem.getPrice());
     }
 
-    public void purchaseItem(View view){
+    public void purchaseItem(View view) {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         String userID = mUser.getUid();
@@ -72,14 +72,12 @@ public class AddToBasket extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Item itemObj = snapshot.getValue(Item.class);
-                stock = itemObj.getStock();
-                if (stock > 0){
+                if (purchaseItemFac(itemObj)) {
                     stock--;
                     fireDB2.child("stock").setValue(stock);
-
                     DatabaseReference db = FirebaseDatabase.getInstance().getReference();
                     Purchase purchase = new Purchase(name, title, 1);
-                    Long tsLong = System.currentTimeMillis()/1000;
+                    Long tsLong = System.currentTimeMillis() / 1000;
                     String timestamp = tsLong.toString();
                     db.child("Purchase").child(timestamp).setValue(purchase).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -90,7 +88,7 @@ public class AddToBasket extends AppCompatActivity {
                         }
                     });
                 } else {
-                    Toast.makeText(AddToBasket.this, "Error: no stock",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddToBasket.this, "Error: no stock", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getApplicationContext(), CustomerPage.class);
                     startActivity(intent);
                 }
@@ -101,5 +99,16 @@ public class AddToBasket extends AppCompatActivity {
 
             }
         });
+    }
+
+
+    @Override
+    public boolean purchaseItemFac(Item item) {
+        stock = item.getStock();
+        if (stock > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
