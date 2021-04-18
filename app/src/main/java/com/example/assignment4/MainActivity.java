@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                             mUser = mAuth.getCurrentUser();
                             String userID = mUser.getUid();
                             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-                            User user = new User(email, userType);
+                            User user = new User.Builder(email).atUserType(userType).build();
                             db.child("User").child(userID).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                             mUser = mAuth.getCurrentUser();
                             String userID = mUser.getUid();
                             DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-                            User user = new User(email, userType);
+                            User user = new User.Builder(email).atUserType(userType).build();
                             db.child("User").child(userID).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

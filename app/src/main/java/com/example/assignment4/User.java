@@ -1,11 +1,65 @@
 package com.example.assignment4;
 
 public class User {
-    String name;
-    String email;
-    String userType;
-    String address;
-    String ccno;
+
+    public static class Builder {
+        private String name;
+        private String email;
+        private String userType;
+        private String address;
+        private String ccno;
+
+        public Builder(String email) {
+            this.email = email;
+        }
+
+        public Builder atName(String name) {
+            this.name = name;
+
+            return this;
+        }
+
+        public Builder atEmail(String email) {
+            this.email = email;
+
+            return this;
+        }
+
+        public Builder atUserType(String userType) {
+            this.userType = userType;
+
+            return this;
+        }
+
+        public Builder atAddress(String address) {
+            this.address = address;
+
+            return this;
+        }
+
+        public Builder atCcno(String ccnno) {
+            this.ccno = ccnno;
+
+            return this;
+        }
+
+        public User build() {
+            User user = new User();
+            user.name = this.name;
+            user.email = this.email;
+            user.address = this.address;
+            user.userType = this.userType;
+            user.ccno = this.ccno;
+
+            return user;
+        }
+    }
+
+        String name;
+        String email;
+        String userType;
+        String address;
+        String ccno;
 
     public User(){
         this.name = null;
